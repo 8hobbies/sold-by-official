@@ -1,0 +1,48 @@
+{
+  "name": "Sold by Official",
+  "description": "Filter e-commerce websites to the official seller only",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "compile": "tsc",
+    "format": "eslint --fix */**.ts *.mjs && prettier . --write",
+    "lint": "eslint */**.ts *.mjs --report-unused-disable-directives --max-warnings 0 && prettier . --check && npm run build && web-ext lint -s sold-by-official.zip",
+    "dev": "vite",
+    "ff:android": "web-ext run -t firefox-android --firefox-apk org.mozilla.fenix --adb-device",
+    "test": "vitest run --coverage --typecheck",
+    "build": "npm run compile && vite build && web-ext build -a . -s dist --overwrite-dest --filename sold-by-official.zip"
+  },
+  "keywords": [
+    "browser-extension"
+  ],
+  "author": "GoodAddon",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/8hobbies/sold-by-official/issues"
+  },
+  "homepage": "https://www.goodaddon.com/sold-by-official/",
+  "dependencies": {
+    "@8hobbies/utils": "^4.1.0"
+  },
+  "devDependencies": {
+    "@8hobbies/eslint-conf-baseline": "^6.0.0",
+    "@8hobbies/vite-plugin-year": "^1.0.2",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.1.0",
+    "@testing-library/user-event": "^14.5.2",
+    "@types/chrome": "^0.0.287",
+    "@types/jest": "^29.5.14",
+    "@types/webextension-polyfill": "^0.12.1",
+    "@vitest/coverage-v8": "^2.1.8",
+    "happy-dom": "^15.11.7",
+    "prettier": "^3.4.2",
+    "sass-embedded": "^1.82.0",
+    "typescript": "~5.7.2",
+    "typescript-eslint": "^8.18.0",
+    "vite": "^6.0.3",
+    "vite-plugin-web-extension": "^4.3.1",
+    "vitest": "^2.1.6",
+    "web-ext": "^8.3.0"
+  }
+}
