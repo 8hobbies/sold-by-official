@@ -6,7 +6,7 @@
   },
   "minimum_chrome_version": "128",
   "permissions": ["storage"],
-  "host_permissions": ["*://www.amazon.com/*"],
+  "host_permissions": ["https://www.amazon.com/s?*"],
   "action": {},
   "browser_specific_settings": {
     "gecko": {
