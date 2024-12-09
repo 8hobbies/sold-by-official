@@ -16,10 +16,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { default as baseConfigs } from "@8hobbies/eslint-conf-baseline";
-import configs from "@8hobbies/eslint-conf-react-baseline";
+import configs from "@8hobbies/eslint-conf-baseline";
 
-const reactConfig = configs.recommended(import.meta.dirname, true);
-reactConfig[reactConfig.length - 1].files = ["src/*.ts", "src/*.tsx"];
-
-export default [...baseConfigs.recommended, ...reactConfig];
+export default [
+  ...configs.recommended,
+  {
+    files: ["**/*.ts"],
+    ignores: configs.ignores,
+    languageOptions: {
+      parserOptions: {
+        project: ["tsconfig.json"],
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+  },
+];
