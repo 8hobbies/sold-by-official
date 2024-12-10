@@ -3,6 +3,7 @@ root = true
 [*.{js,ts,tsx,mjs}]
 indent_size = 2
 indent_style = space
+max_line_length = 80
 
 [*.scss]
 indent_size = 2
