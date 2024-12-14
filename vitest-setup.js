@@ -1,15 +1,15 @@
 import "@testing-library/jest-dom/vitest";
 
-let syncStorage = {};
+let localBrowserStorage = {};
 
 globalThis.chrome = {
   storage: {
-    sync: {
+    local: {
       set: async (items) => {
-        syncStorage = items;
+        localBrowserStorage = items;
       },
       get: async () => {
-        return syncStorage;
+        return localBrowserStorage;
       },
     },
   },
@@ -20,5 +20,5 @@ globalThis.window.alert = (message) => {
 };
 
 globalThis.resetBrowserStorage = () => {
-  syncStorage = {};
+  localBrowserStorage = {};
 };

@@ -20,46 +20,109 @@ import { SiteData, amazonComParam, builtinSiteData } from "./site_data";
 import { generateActivatingUrl, generateDisablingUrl } from "./main";
 
 describe("generate Url", () => {
-  const activatingResult = "https://example.com/?result=activated" as const;
-  const disablingResult = "https://example.com/?notactivated" as const;
-  const matchingUrl = "https://example.com";
-  const unmatchingUrl = "https://example.org";
+  const activating1Result = "https://example.com/?result=activated" as const;
+  const disabling1Result = "https://example.com/?notactivated" as const;
+  const matching1Url = "https://example.com";
+  const matching2Url = "https://example.org";
+  const activating2Result = "https://example.org/?result=activated" as const;
+  const disabling2Result = "https://example.org/?notactivated" as const;
+  const unmatchingUrl = "https://example.net";
   const siteData = [
     {
+      id: "Test",
       name: "Test Example",
       urlRegex: /https:\/\/example\.com/,
-      activatingFunc: (): string => activatingResult,
-      disablingFunc: (): string => disablingResult,
+      activatingFunc: (): string => activating1Result,
+      disablingFunc: (): string => disabling1Result,
+    },
+    {
+      id: "Test 2",
+      name: "Test 2 Example",
+      urlRegex: /https:\/\/example\.org/,
+      activatingFunc: (): string => activating2Result,
+      disablingFunc: (): string => disabling2Result,
     },
   ] as const satisfies SiteData;
 
-  test("Returns activating function result if URL matches", () => {
-    expect(generateActivatingUrl(matchingUrl, siteData)).toBe(activatingResult);
+  beforeEach(async () => {
+    vi.restoreAllMocks();
+    resetBrowserStorage();
+    await chrome.storage.local.set({
+      onOff: { [siteData[0].id]: true, [siteData[1].id]: true },
+    });
   });
 
-  test("Returns disabling function result if URL matches", () => {
-    expect(generateDisablingUrl(matchingUrl, siteData)).toBe(disablingResult);
+  test("Returns activating function result if URL matches the first", async () => {
+    expect(await generateActivatingUrl(matching1Url, siteData)).toBe(
+      activating1Result,
+    );
+  });
+
+  test("Returns activating function result if URL matches the second", async () => {
+    expect(await generateActivatingUrl(matching2Url, siteData)).toBe(
+      activating2Result,
+    );
+  });
+
+  test("Returns disabling function result if URL matches the first", () => {
+    expect(generateDisablingUrl(matching1Url, siteData)).toBe(disabling1Result);
+  });
+
+  test("Returns disabling function result if URL matches the second", () => {
+    expect(generateDisablingUrl(matching2Url, siteData)).toBe(disabling2Result);
   });
 
   for (const func of [generateActivatingUrl, generateDisablingUrl] as const) {
-    test("Returns null if no URL matches", () => {
-      expect(func(unmatchingUrl, siteData)).toBeNull();
+    test("Returns null if no URL matches", async () => {
+      expect(await func(unmatchingUrl, siteData)).toBeNull();
     });
   }
 
-  describe("builtin sitedata", () => {
-    test("Amazon.com activating matched", () => {
-      expect(
-        generateActivatingUrl("https://www.amazon.com/s?", builtinSiteData),
-      ).toBe(
-        `https://www.amazon.com/s?${amazonComParam.key}=${encodeURIComponent(amazonComParam.value)}`,
-      );
+  for (const falsyValue of [false, ""]) {
+    test(`Activating function result is null if option is false ${falsyValue.toString()}`, async () => {
+      await chrome.storage.local.set({
+        onOff: { [siteData[0].id]: falsyValue, [siteData[1].id]: falsyValue },
+      });
+      expect(await generateActivatingUrl(matching1Url, siteData)).toBeNull();
+      expect(await generateActivatingUrl(matching2Url, siteData)).toBeNull();
     });
+  }
 
-    test("Amazon.com disabling matched", () => {
-      expect(
-        generateDisablingUrl("https://www.amazon.com/s?rh=", builtinSiteData),
-      ).toBe("https://www.amazon.com/s");
+  for (const option of [
+    ["non-object onOff", { onOff: "not an object" }],
+    ["null onOff", { onOff: null }],
+    ["Missing site ID", { onOff: { "random ID": true } }],
+  ] as const) {
+    test(`Activating function throws if onOff is invalid: ${option[0]}`, async () => {
+      const localOption: object = option[1];
+      await chrome.storage.local.set(localOption);
+      await expect(
+        generateActivatingUrl(matching1Url, siteData),
+      ).rejects.toThrow("Unexpected onOff options type");
     });
+  }
+});
+
+describe("builtin sitedata", () => {
+  beforeEach(async () => {
+    vi.restoreAllMocks();
+    resetBrowserStorage();
+    await chrome.storage.local.set({
+      onOff: { [builtinSiteData[0].id]: true },
+    });
+  });
+
+  test("Amazon.com activating matched", async () => {
+    expect(
+      await generateActivatingUrl("https://www.amazon.com/s?", builtinSiteData),
+    ).toBe(
+      `https://www.amazon.com/s?${amazonComParam.key}=${encodeURIComponent(amazonComParam.value)}`,
+    );
+  });
+
+  test("Amazon.com disabling matched", () => {
+    expect(
+      generateDisablingUrl("https://www.amazon.com/s?rh=", builtinSiteData),
+    ).toBe("https://www.amazon.com/s");
   });
 });
