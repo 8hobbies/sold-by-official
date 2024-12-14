@@ -19,6 +19,8 @@
 import { addUrlParam, removeUrlParam } from "./utils";
 
 export interface SiteDataEntry {
+  id: string;
+  // Human readable name.
   name: string;
   // Regular expression to match the website.
   urlRegex: RegExp;
@@ -33,10 +35,11 @@ export type SiteData = SiteDataEntry[];
 export const amazonComParam = {
   key: "rh",
   value: "n:16310101,p_6:ATVPDKIKX0DER",
-};
+} as const;
 
 export const builtinSiteData = [
   {
+    id: "Amazon.com",
     name: "Amazon.com",
     urlRegex: /https:\/\/www\.amazon\.com\/s.*/,
     disablingFunc: (url: string): string | null =>

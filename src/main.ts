@@ -18,6 +18,11 @@
 
 import type { SiteData, SiteDataEntry } from "./site_data";
 
+// TODO: Move this to a utility library.
+function isIn<T extends object>(key: PropertyKey, obj: T): key is keyof T {
+  return key in obj;
+}
+
 function getMatchedSite(url: string, siteData: SiteData): SiteDataEntry | null {
   const matchedSite = siteData.find((siteDataEntry) =>
     siteDataEntry.urlRegex.exec(url),
@@ -27,13 +32,32 @@ function getMatchedSite(url: string, siteData: SiteData): SiteDataEntry | null {
 }
 
 /** Returns the updated URL of the functionality of this extension on a given current URL. */
-export function generateActivatingUrl(
+export async function generateActivatingUrl(
   url: string,
   siteData: SiteData,
-): string | null {
+): Promise<string | null> {
   const matchedSite = getMatchedSite(url, siteData);
 
-  return matchedSite?.activatingFunc(url) ?? null;
+  if (matchedSite === null) {
+    return null;
+  }
+
+  // Don't generate URL if not activated.
+  const matchedSiteId = matchedSite.id;
+  const onOffOptions: unknown = (
+    await chrome.storage.local.get({ onOff: { [matchedSiteId]: true } })
+  ).onOff;
+  if (
+    typeof onOffOptions !== "object" ||
+    onOffOptions === null ||
+    !isIn(matchedSiteId, onOffOptions)
+  ) {
+    throw new Error("Unexpected onOff options type");
+  }
+
+  const activated = Boolean(onOffOptions[matchedSiteId]);
+
+  return activated ? matchedSite.activatingFunc(url) : null;
 }
 
 export function generateDisablingUrl(
