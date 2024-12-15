@@ -17,7 +17,11 @@
  */
 
 import { SiteData, amazonComParam, builtinSiteData } from "./site_data";
-import { generateActivatingUrl, generateDisablingUrl } from "./main";
+import {
+  generateActivatingUrl,
+  generateDisablingUrl,
+  toggleExtensionOnCurrentSite,
+} from "./main";
 
 describe("generate Url", () => {
   const activating1Result = "https://example.com/?result=activated" as const;
@@ -72,7 +76,29 @@ describe("generate Url", () => {
     expect(generateDisablingUrl(matching2Url, siteData)).toBe(disabling2Result);
   });
 
-  for (const func of [generateActivatingUrl, generateDisablingUrl] as const) {
+  test("Returns activating function result if toggling when the site is enabled", async () => {
+    await chrome.storage.local.set({
+      onOff: { [siteData[0].id]: true },
+    });
+    expect(await toggleExtensionOnCurrentSite(matching1Url, siteData)).toBe(
+      disabling1Result,
+    );
+  });
+
+  test("Returns activating function result if toggling when the site is disabled", async () => {
+    await chrome.storage.local.set({
+      onOff: { [siteData[0].id]: false },
+    });
+    expect(await toggleExtensionOnCurrentSite(matching1Url, siteData)).toBe(
+      activating1Result,
+    );
+  });
+
+  for (const func of [
+    generateActivatingUrl,
+    generateDisablingUrl,
+    toggleExtensionOnCurrentSite,
+  ] as const) {
     test("Returns null if no URL matches", async () => {
       expect(await func(unmatchingUrl, siteData)).toBeNull();
     });
@@ -91,13 +117,20 @@ describe("generate Url", () => {
   for (const option of [
     ["non-object onOff", { onOff: "not an object" }],
     ["null onOff", { onOff: null }],
-    ["Missing site ID", { onOff: { "random ID": true } }],
   ] as const) {
     test(`Activating function throws if onOff is invalid: ${option[0]}`, async () => {
       const localOption: object = option[1];
       await chrome.storage.local.set(localOption);
       await expect(
         generateActivatingUrl(matching1Url, siteData),
+      ).rejects.toThrow("Unexpected onOff options type");
+    });
+
+    test(`Toggle function throws if onOff is invalid: ${option[0]}`, async () => {
+      const localOption: object = option[1];
+      await chrome.storage.local.set(localOption);
+      await expect(
+        toggleExtensionOnCurrentSite(matching1Url, siteData),
       ).rejects.toThrow("Unexpected onOff options type");
     });
   }

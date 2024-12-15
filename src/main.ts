@@ -17,11 +17,7 @@
  */
 
 import type { SiteData, SiteDataEntry } from "./site_data";
-
-// TODO: Move this to a utility library.
-function isIn<T extends object>(key: PropertyKey, obj: T): key is keyof T {
-  return key in obj;
-}
+import { getOnOffOption, toggleOnOffOption } from "./onoff_options";
 
 function getMatchedSite(url: string, siteData: SiteData): SiteDataEntry | null {
   const matchedSite = siteData.find((siteDataEntry) =>
@@ -31,7 +27,8 @@ function getMatchedSite(url: string, siteData: SiteData): SiteDataEntry | null {
   return matchedSite ?? null;
 }
 
-/** Returns the updated URL of the functionality of this extension on a given current URL. */
+/** Returns the updated URL of the functionality of this extension on a given
+    current URL. Called when visiting a web page. */
 export async function generateActivatingUrl(
   url: string,
   siteData: SiteData,
@@ -43,23 +40,13 @@ export async function generateActivatingUrl(
   }
 
   // Don't generate URL if not activated.
-  const matchedSiteId = matchedSite.id;
-  const onOffOptions: unknown = (
-    await chrome.storage.local.get({ onOff: { [matchedSiteId]: true } })
-  ).onOff;
-  if (
-    typeof onOffOptions !== "object" ||
-    onOffOptions === null ||
-    !isIn(matchedSiteId, onOffOptions)
-  ) {
-    throw new Error("Unexpected onOff options type");
-  }
-
-  const activated = Boolean(onOffOptions[matchedSiteId]);
-
-  return activated ? matchedSite.activatingFunc(url) : null;
+  return (await getOnOffOption(matchedSite.id))
+    ? matchedSite.activatingFunc(url)
+    : null;
 }
 
+/** Returns the URL after the user disables the extension for the site being
+    visited. */
 export function generateDisablingUrl(
   url: string,
   siteData: SiteData,
@@ -67,4 +54,21 @@ export function generateDisablingUrl(
   const matchedSite = getMatchedSite(url, siteData);
 
   return matchedSite?.disablingFunc(url) ?? null;
+}
+
+export async function toggleExtensionOnCurrentSite(
+  url: string,
+  siteData: SiteData,
+): Promise<string | null> {
+  const matchedSite = getMatchedSite(url, siteData);
+
+  if (matchedSite === null) {
+    return null;
+  }
+
+  if (await toggleOnOffOption(matchedSite.id)) {
+    return generateActivatingUrl(url, siteData);
+  } else {
+    return generateDisablingUrl(url, siteData);
+  }
 }
