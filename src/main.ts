@@ -27,6 +27,18 @@ function getMatchedSite(url: string, siteData: SiteData): SiteDataEntry | null {
   return matchedSite ?? null;
 }
 
+async function generateActivatingUrlFromSiteDataEntry(
+  url: string,
+  site: SiteDataEntry | null,
+): Promise<string | null> {
+  if (site === null) {
+    return null;
+  }
+
+  // Don't generate URL if not activated.
+  return (await getOnOffOption(site.id)) ? site.activatingFunc(url) : null;
+}
+
 /** Returns the updated URL of the functionality of this extension on a given
     current URL. Called when visiting a web page. */
 export async function generateActivatingUrl(
@@ -35,14 +47,15 @@ export async function generateActivatingUrl(
 ): Promise<string | null> {
   const matchedSite = getMatchedSite(url, siteData);
 
-  if (matchedSite === null) {
-    return null;
-  }
-
   // Don't generate URL if not activated.
-  return (await getOnOffOption(matchedSite.id))
-    ? matchedSite.activatingFunc(url)
-    : null;
+  return generateActivatingUrlFromSiteDataEntry(url, matchedSite);
+}
+
+function generateDisablingUrlFromSiteDataEntry(
+  url: string,
+  site: SiteDataEntry | null,
+): string | null {
+  return site?.disablingFunc(url) ?? null;
 }
 
 /** Returns the URL after the user disables the extension for the site being
@@ -53,7 +66,7 @@ export function generateDisablingUrl(
 ): string | null {
   const matchedSite = getMatchedSite(url, siteData);
 
-  return matchedSite?.disablingFunc(url) ?? null;
+  return generateDisablingUrlFromSiteDataEntry(url, matchedSite);
 }
 
 export async function toggleExtensionOnCurrentSite(
@@ -67,8 +80,8 @@ export async function toggleExtensionOnCurrentSite(
   }
 
   if (await toggleOnOffOption(matchedSite.id)) {
-    return generateActivatingUrl(url, siteData);
+    return generateActivatingUrlFromSiteDataEntry(url, matchedSite);
   } else {
-    return generateDisablingUrl(url, siteData);
+    return generateDisablingUrlFromSiteDataEntry(url, matchedSite);
   }
 }
