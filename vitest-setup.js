@@ -13,6 +13,9 @@ globalThis.chrome = {
       },
     },
   },
+  action: {
+    setBadgeText: async () => {},
+  },
 };
 
 globalThis.window.alert = (message) => {

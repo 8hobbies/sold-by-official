@@ -1,11 +1,12 @@
 {
   "manifest_version": 3,
   "background": {
+    "type": "module",
     "service_worker": "src/background.ts",
     "scripts": ["src/background.ts"]
   },
   "minimum_chrome_version": "128",
-  "permissions": ["storage", "webNavigation"],
+  "permissions": ["activeTab", "storage", "webNavigation"],
   "action": {},
   "browser_specific_settings": {
     "gecko": {
