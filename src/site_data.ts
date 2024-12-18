@@ -34,7 +34,7 @@ export type SiteData = SiteDataEntry[];
 
 export const amazonComParam = {
   key: "rh",
-  value: "n:16310101,p_6:ATVPDKIKX0DER",
+  value: "p_6:ATVPDKIKX0DER",
 } as const;
 
 export const builtinSiteData = [
