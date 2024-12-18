@@ -16,6 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { builtinSiteData } from "./site_data";
+import { generateActivatingUrl } from "./main";
+
 chrome.runtime.onInstalled.addListener(async (details) => {
   if (details.reason === chrome.runtime.OnInstalledReason.INSTALL) {
     await chrome.tabs.create({
@@ -26,4 +29,15 @@ chrome.runtime.onInstalled.addListener(async (details) => {
       url: "https://www.goodaddon.com/sold-by-official/#changelog",
     });
   }
+});
+
+// Override URL when navigating.
+chrome.webNavigation.onBeforeNavigate.addListener(async (details) => {
+  const url = await generateActivatingUrl(details.url, builtinSiteData);
+  if (url === null || url === details.url) {
+    return;
+  }
+  await chrome.tabs.update(details.tabId, {
+    url,
+  });
 });

@@ -5,8 +5,7 @@
     "scripts": ["src/background.ts"]
   },
   "minimum_chrome_version": "128",
-  "permissions": ["storage"],
-  "host_permissions": ["https://www.amazon.com/s?*"],
+  "permissions": ["storage", "webNavigation"],
   "action": {},
   "browser_specific_settings": {
     "gecko": {
