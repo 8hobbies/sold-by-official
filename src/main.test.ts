@@ -126,12 +126,12 @@ describe("generate Url", () => {
       ).rejects.toThrow("Unexpected onOff options type");
     });
 
-    test(`Toggle function throws if onOff is invalid: ${option[0]}`, async () => {
+    test(`Toggle function treats as true if onOff is invalid: ${option[0]}`, async () => {
       const localOption: object = option[1];
       await chrome.storage.local.set(localOption);
-      await expect(
-        toggleExtensionOnCurrentSite(matching1Url, siteData),
-      ).rejects.toThrow("Unexpected onOff options type");
+      expect(await toggleExtensionOnCurrentSite(matching1Url, siteData)).toBe(
+        disabling1Result,
+      );
     });
   }
 });

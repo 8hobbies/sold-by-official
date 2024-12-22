@@ -16,8 +16,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { generateActivatingUrl, toggleExtensionOnCurrentSite } from "./main";
 import { builtinSiteData } from "./site_data";
-import { generateActivatingUrl } from "./main";
 
 chrome.runtime.onInstalled.addListener(async (details) => {
   if (details.reason === chrome.runtime.OnInstalledReason.INSTALL) {
@@ -38,6 +38,23 @@ chrome.webNavigation.onBeforeNavigate.addListener(async (details) => {
     return;
   }
   await chrome.tabs.update(details.tabId, {
+    url,
+  });
+});
+
+// Toggle
+chrome.action.onClicked.addListener(async (tab) => {
+  if (tab.url === undefined || tab.url.length === 0 || tab.id === undefined) {
+    // No permission
+    return;
+  }
+
+  const url = await toggleExtensionOnCurrentSite(tab.url, builtinSiteData);
+  if (url === null || url === tab.url) {
+    return;
+  }
+
+  await chrome.tabs.update(tab.id, {
     url,
   });
 });

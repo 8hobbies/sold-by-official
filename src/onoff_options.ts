@@ -41,13 +41,19 @@ export async function getOnOffOption(siteId: string): Promise<boolean> {
 /** Toggle the on/off status of a site. Returns the new status. */
 export async function toggleOnOffOption(siteId: string): Promise<boolean> {
   const onOffOptions: unknown = (await chrome.storage.local.get("onOff")).onOff;
+  let widenedOnOffOptions: object;
   if (typeof onOffOptions !== "object" || onOffOptions === null) {
-    throw new Error("Unexpected onOff options type");
+    widenedOnOffOptions = {
+      [siteId]: true,
+    };
+  } else {
+    widenedOnOffOptions = onOffOptions;
   }
   // If siteId is absent, it is treated as on.
-  const newValue = isIn(siteId, onOffOptions) && !onOffOptions[siteId];
+  const newValue =
+    isIn(siteId, widenedOnOffOptions) && !widenedOnOffOptions[siteId];
   await chrome.storage.local.set({
-    onOff: { ...onOffOptions, ...{ [siteId]: newValue } },
+    onOff: { ...widenedOnOffOptions, ...{ [siteId]: newValue } },
   });
   return newValue;
 }
