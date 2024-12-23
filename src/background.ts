@@ -16,7 +16,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { generateActivatingUrl, toggleExtensionOnCurrentSite } from "./main";
+import {
+  generateActivatingUrl,
+  getUpdatedBadgeText,
+  toggleExtensionOnCurrentSite,
+} from "./main";
 import { builtinSiteData } from "./site_data";
 
 chrome.runtime.onInstalled.addListener(async (details) => {
@@ -33,12 +37,28 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 
 // Override URL when navigating.
 chrome.webNavigation.onBeforeNavigate.addListener(async (details) => {
+  if (details.frameId !== 0) {
+    return; // We are not concerned with subframes.
+  }
+
   const url = await generateActivatingUrl(details.url, builtinSiteData);
   if (url === null || url === details.url) {
     return;
   }
   await chrome.tabs.update(details.tabId, {
     url,
+  });
+});
+
+// Update badge text once the browser commits to visit a page.
+chrome.webNavigation.onCommitted.addListener(async (details) => {
+  if (details.frameId !== 0) {
+    return; // We are not concerned with subframes.
+  }
+
+  await chrome.action.setBadgeText({
+    tabId: details.tabId,
+    text: await getUpdatedBadgeText(details.url, builtinSiteData),
   });
 });
 

@@ -85,3 +85,16 @@ export async function toggleExtensionOnCurrentSite(
     return generateDisablingUrlFromSiteDataEntry(url, matchedSite);
   }
 }
+
+/** Get the new badge text for a given tab. */
+export async function getUpdatedBadgeText(
+  url: string,
+  siteData: SiteData,
+): Promise<string> {
+  const matchedSite = getMatchedSite(url, siteData);
+  return matchedSite === null
+    ? ""
+    : (await getOnOffOption(matchedSite.id))
+      ? "ON"
+      : "OFF";
+}
