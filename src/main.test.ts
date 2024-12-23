@@ -20,6 +20,7 @@ import { SiteData, amazonComParam, builtinSiteData } from "./site_data";
 import {
   generateActivatingUrl,
   generateDisablingUrl,
+  getUpdatedBadgeText,
   toggleExtensionOnCurrentSite,
 } from "./main";
 
@@ -134,6 +135,24 @@ describe("generate Url", () => {
       );
     });
   }
+
+  describe("Badge text", () => {
+    test("Badge text should be on if the extension is on on the site", async () => {
+      await chrome.storage.local.set({
+        onOff: { [siteData[0].id]: true },
+      });
+      expect(await getUpdatedBadgeText(matching1Url, siteData)).toBe("ON");
+    });
+    test("Badge text should be off if the extension is off on the site", async () => {
+      await chrome.storage.local.set({
+        onOff: { [siteData[0].id]: false },
+      });
+      expect(await getUpdatedBadgeText(matching1Url, siteData)).toBe("OFF");
+    });
+    test("Badge text should be empty if the site doesn't match", async () => {
+      expect(await getUpdatedBadgeText(unmatchingUrl, siteData)).toBe("");
+    });
+  });
 });
 
 describe("builtin sitedata", () => {
