@@ -24,9 +24,11 @@ export interface SiteDataEntry {
   name: string;
   // Regular expression to match the website.
   urlRegex: RegExp;
-  // Function being called when the user visits a website of interest.
+  // Function being called when the user visits a website of interest. Returns a
+  // new URL if the URL should change.
   activatingFunc: (url: string) => string | null;
-  // Function being called when the user clicks on the extension icon to disable.
+  // Function being called when the user clicks on the extension icon to
+  // disable. Returns a new URL if the URL should change.
   disablingFunc: (url: string) => string | null;
 }
 

@@ -24,29 +24,38 @@ import {
 } from "./main";
 
 describe("generate Url", () => {
-  const activating1Result = "https://example.com/?result=activated" as const;
-  const disabling1Result = "https://example.com/?notactivated" as const;
-  const matching1Url = "https://example.com";
-  const matching2Url = "https://example.org";
-  const activating2Result = "https://example.org/?result=activated" as const;
-  const disabling2Result = "https://example.org/?notactivated" as const;
-  const unmatchingUrl = "https://example.net";
+  const activating1ResultUrl = "https://example.com/?result=activated" as const;
+  const activating2ResultUrl = "https://example.org/?result=activated" as const;
   const siteData = [
     {
       id: "Test",
       name: "Test Example",
       urlRegex: /https:\/\/example\.com/,
-      activatingFunc: (): string => activating1Result,
+      activatingFunc: (): string => activating1ResultUrl,
       disablingFunc: (): string => disabling1Result,
     },
     {
       id: "Test 2",
       name: "Test 2 Example",
       urlRegex: /https:\/\/example\.org/,
-      activatingFunc: (): string => activating2Result,
+      activatingFunc: (): string => activating2ResultUrl,
       disablingFunc: (): string => disabling2Result,
     },
   ] as const satisfies SiteData;
+
+  const activating1Result = {
+    url: activating1ResultUrl,
+    matchedSite: siteData[0],
+  } as const;
+  const disabling1Result = "https://example.com/?notactivated" as const;
+  const matching1Url = "https://example.com";
+  const matching2Url = "https://example.org";
+  const activating2Result = {
+    url: activating2ResultUrl,
+    matchedSite: siteData[1],
+  } as const;
+  const disabling2Result = "https://example.org/?notactivated" as const;
+  const unmatchingUrl = "https://example.net";
 
   beforeEach(async () => {
     vi.restoreAllMocks();
@@ -57,13 +66,13 @@ describe("generate Url", () => {
   });
 
   test("Returns activating function result if URL matches the first", async () => {
-    expect(await generateActivatingUrl(matching1Url, siteData)).toBe(
+    expect(await generateActivatingUrl(matching1Url, siteData)).toStrictEqual(
       activating1Result,
     );
   });
 
   test("Returns activating function result if URL matches the second", async () => {
-    expect(await generateActivatingUrl(matching2Url, siteData)).toBe(
+    expect(await generateActivatingUrl(matching2Url, siteData)).toStrictEqual(
       activating2Result,
     );
   });
@@ -85,32 +94,48 @@ describe("generate Url", () => {
     );
   });
 
-  test("Returns activating function result if toggling when the site is disabled", async () => {
+  test("Returns activating function result url if toggling when the site is disabled", async () => {
     await chrome.storage.local.set({
       onOff: { [siteData[0].id]: false },
     });
     expect(await toggleExtensionOnCurrentSite(matching1Url, siteData)).toBe(
-      activating1Result,
+      activating1Result.url,
     );
   });
 
+  test("generateActivatingUrl returns null if no URL matches", async () => {
+    expect(await generateActivatingUrl(unmatchingUrl, siteData)).toStrictEqual({
+      url: null,
+      matchedSite: null,
+    });
+  });
+
   for (const func of [
-    generateActivatingUrl,
     generateDisablingUrl,
     toggleExtensionOnCurrentSite,
   ] as const) {
-    test("Returns null if no URL matches", async () => {
+    test(`${func.name} returns null if no URL matches`, async () => {
       expect(await func(unmatchingUrl, siteData)).toBeNull();
     });
   }
 
   for (const falsyValue of [false, ""]) {
-    test(`Activating function result is null if option is false ${falsyValue.toString()}`, async () => {
+    test(`Activating function result is null url if option is false ${falsyValue.toString()}`, async () => {
       await chrome.storage.local.set({
         onOff: { [siteData[0].id]: falsyValue, [siteData[1].id]: falsyValue },
       });
-      expect(await generateActivatingUrl(matching1Url, siteData)).toBeNull();
-      expect(await generateActivatingUrl(matching2Url, siteData)).toBeNull();
+      expect(await generateActivatingUrl(matching1Url, siteData)).toStrictEqual(
+        {
+          url: null,
+          matchedSite: siteData[0],
+        },
+      );
+      expect(await generateActivatingUrl(matching2Url, siteData)).toStrictEqual(
+        {
+          url: null,
+          matchedSite: siteData[1],
+        },
+      );
     });
   }
 
@@ -148,9 +173,10 @@ describe("builtin sitedata", () => {
   test("Amazon.com activating matched", async () => {
     expect(
       await generateActivatingUrl("https://www.amazon.com/s?", builtinSiteData),
-    ).toBe(
-      `https://www.amazon.com/s?${amazonComParam.key}=${encodeURIComponent(amazonComParam.value)}`,
-    );
+    ).toStrictEqual({
+      url: `https://www.amazon.com/s?${amazonComParam.key}=${encodeURIComponent(amazonComParam.value)}`,
+      matchedSite: builtinSiteData[0],
+    });
   });
 
   test("Amazon.com disabling matched", () => {

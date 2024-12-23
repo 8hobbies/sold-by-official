@@ -16,7 +16,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { generateActivatingUrl, toggleExtensionOnCurrentSite } from "./main";
+import {
+  generateActivatingUrl,
+  toggleExtensionOnCurrentSite,
+  updateBadgeText,
+} from "./main";
 import { builtinSiteData } from "./site_data";
 
 chrome.runtime.onInstalled.addListener(async (details) => {
@@ -33,7 +37,15 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 
 // Override URL when navigating.
 chrome.webNavigation.onBeforeNavigate.addListener(async (details) => {
-  const url = await generateActivatingUrl(details.url, builtinSiteData);
+  const { url, matchedSite } = await generateActivatingUrl(
+    details.url,
+    builtinSiteData,
+  );
+
+  if (matchedSite !== null) {
+    await updateBadgeText(details.tabId, matchedSite.id);
+  }
+
   if (url === null || url === details.url) {
     return;
   }

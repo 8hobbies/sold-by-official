@@ -44,11 +44,14 @@ async function generateActivatingUrlFromSiteDataEntry(
 export async function generateActivatingUrl(
   url: string,
   siteData: SiteData,
-): Promise<string | null> {
+): Promise<{ url: string | null; matchedSite: SiteDataEntry | null }> {
   const matchedSite = getMatchedSite(url, siteData);
 
   // Don't generate URL if not activated.
-  return generateActivatingUrlFromSiteDataEntry(url, matchedSite);
+  return {
+    url: await generateActivatingUrlFromSiteDataEntry(url, matchedSite),
+    matchedSite,
+  };
 }
 
 function generateDisablingUrlFromSiteDataEntry(
@@ -84,4 +87,15 @@ export async function toggleExtensionOnCurrentSite(
   } else {
     return generateDisablingUrlFromSiteDataEntry(url, matchedSite);
   }
+}
+
+/** Update badge text for a given tab. */
+export async function updateBadgeText(
+  tabId: number,
+  siteId: string,
+): Promise<void> {
+  await chrome.action.setBadgeText({
+    tabId,
+    text: (await getOnOffOption(siteId)) ? "ON" : "OFF",
+  });
 }
