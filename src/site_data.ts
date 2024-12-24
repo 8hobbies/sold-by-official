@@ -32,9 +32,15 @@ export interface SiteDataEntry {
 
 export type SiteData = SiteDataEntry[];
 
-export const amazonComParam = {
-  key: "rh",
-  value: "p_6:ATVPDKIKX0DER",
+export const siteParams = {
+  "Amazon.com": {
+    key: "rh",
+    value: "p_6:ATVPDKIKX0DER",
+  },
+  "Amazon.ca": {
+    key: "rh",
+    value: "p_6:A3DWYIK6Y9EEQB",
+  },
 } as const;
 
 export const builtinSiteData = [
@@ -43,8 +49,25 @@ export const builtinSiteData = [
     name: "Amazon.com",
     urlRegex: /https:\/\/www\.amazon\.com\/s.*/,
     disablingFunc: (url: string): string | null =>
-      removeUrlParam(url, amazonComParam.key),
+      removeUrlParam(url, siteParams["Amazon.com"].key),
     activatingFunc: (url: string): string | null =>
-      addUrlParam(url, amazonComParam.key, amazonComParam.value),
+      addUrlParam(
+        url,
+        siteParams["Amazon.com"].key,
+        siteParams["Amazon.com"].value,
+      ),
+  },
+  {
+    id: "Amazon.ca",
+    name: "Amazon.ca",
+    urlRegex: /https:\/\/www\.amazon\.ca\/s.*/,
+    disablingFunc: (url: string): string | null =>
+      removeUrlParam(url, siteParams["Amazon.ca"].key),
+    activatingFunc: (url: string): string | null =>
+      addUrlParam(
+        url,
+        siteParams["Amazon.ca"].key,
+        siteParams["Amazon.ca"].value,
+      ),
   },
 ] as const satisfies SiteData;
