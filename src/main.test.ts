@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { SiteData, amazonComParam, builtinSiteData } from "./site_data";
+import { SiteData, builtinSiteData, siteParams } from "./site_data";
 import {
   generateActivatingUrl,
   generateDisablingUrl,
@@ -160,21 +160,34 @@ describe("builtin sitedata", () => {
     vi.restoreAllMocks();
     resetBrowserStorage();
     await chrome.storage.local.set({
-      onOff: { [builtinSiteData[0].id]: true },
+      // Let the extension be on on all sites. We need to explicitly set these
+      // because the mock storage doesn't have the capability to set default
+      // value like the real one.
+      onOff: Object.fromEntries(builtinSiteData.map((site) => [site.id, true])),
     });
   });
 
-  test("Amazon.com activating matched", async () => {
-    expect(
-      await generateActivatingUrl("https://www.amazon.com/s?", builtinSiteData),
-    ).toBe(
-      `https://www.amazon.com/s?${amazonComParam.key}=${encodeURIComponent(amazonComParam.value)}`,
-    );
-  });
+  for (const amazonSiteId of ["Amazon.com", "Amazon.ca"] as const) {
+    const tld = amazonSiteId.split(".").pop();
 
-  test("Amazon.com disabling matched", () => {
-    expect(
-      generateDisablingUrl("https://www.amazon.com/s?rh=", builtinSiteData),
-    ).toBe("https://www.amazon.com/s");
-  });
+    test(`${amazonSiteId} activating matched`, async () => {
+      expect(
+        await generateActivatingUrl(
+          `https://www.amazon.${tld}/s?`,
+          builtinSiteData,
+        ),
+      ).toBe(
+        `https://www.amazon.${tld}/s?${siteParams[amazonSiteId].key}=${encodeURIComponent(siteParams[amazonSiteId].value)}`,
+      );
+    });
+
+    test(`${amazonSiteId} disabling matched`, () => {
+      expect(
+        generateDisablingUrl(
+          `https://www.amazon.${tld}/s?rh=`,
+          builtinSiteData,
+        ),
+      ).toBe(`https://www.amazon.${tld}/s`);
+    });
+  }
 });
