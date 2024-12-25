@@ -16,26 +16,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-// TODO: Move this to a utility library.
-function isIn<T extends object>(key: PropertyKey, obj: T): key is keyof T {
-  return key in obj;
-}
+import { isInObject } from "@8hobbies/utils";
 
 /** Get the on/off status of a site. */
 export async function getOnOffOption(siteId: string): Promise<boolean> {
-  const onOffOptions: unknown = (
-    await chrome.storage.local.get({ onOff: { [siteId]: true } })
-  ).onOff;
+  const onOffOptions: unknown = // If siteId is absent, it is treated as on.
+    (await chrome.storage.local.get({ onOff: { [siteId]: true } })).onOff;
   if (
     typeof onOffOptions !== "object" ||
     onOffOptions === null ||
-    !isIn(siteId, onOffOptions)
+    !isInObject(siteId, onOffOptions)
   ) {
     throw new Error("Unexpected onOff options type");
   }
 
-  // If siteId is absent, it is treated as on.
-  return !isIn(siteId, onOffOptions) || Boolean(onOffOptions[siteId]);
+  return Boolean(onOffOptions[siteId]);
 }
 
 /** Toggle the on/off status of a site. Returns the new status. */
@@ -51,7 +46,7 @@ export async function toggleOnOffOption(siteId: string): Promise<boolean> {
   }
   // If siteId is absent, it is treated as on.
   const newValue =
-    isIn(siteId, widenedOnOffOptions) && !widenedOnOffOptions[siteId];
+    isInObject(siteId, widenedOnOffOptions) && !widenedOnOffOptions[siteId];
   await chrome.storage.local.set({
     onOff: { ...widenedOnOffOptions, ...{ [siteId]: newValue } },
   });

@@ -23,7 +23,7 @@
   },
   "homepage": "https://www.goodaddon.com/sold-by-official/",
   "dependencies": {
-    "@8hobbies/utils": "^4.1.0"
+    "@8hobbies/utils": "^4.2.0"
   },
   "devDependencies": {
     "@8hobbies/eslint-conf-baseline": "^6.0.0",
