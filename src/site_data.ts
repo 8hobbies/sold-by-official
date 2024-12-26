@@ -41,6 +41,30 @@ export const siteParams = {
     key: "rh",
     value: "p_6:ATVPDKIKX0DER",
   },
+  "Amazon.co.jp": {
+    key: "rh",
+    value: "p_6:AN1VRQENFRJN5",
+  },
+  "Amazon.co.uk": {
+    key: "rh",
+    value: "p_6:A3P5ROKL5A1OLE",
+  },
+  "Amazon.de": {
+    key: "rh",
+    value: "p_6:A3JWKAKR8XB7XF",
+  },
+  "Amazon.es": {
+    key: "rh",
+    value: "p_6:A1AT7YVPFBWXBL",
+  },
+  "Amazon.fr": {
+    key: "rh",
+    value: "p_6:A1X6FK5RDHNB96",
+  },
+  "Amazon.it": {
+    key: "rh",
+    value: "p_6:A11IL2PNWYJU7H",
+  },
   "Newegg.ca": {
     key: "N",
     value: "8000",
@@ -80,6 +104,84 @@ export const builtinSiteData = [
         url,
         siteParams["Amazon.com"].key,
         siteParams["Amazon.com"].value,
+      ),
+  },
+  {
+    id: "Amazon.co.jp",
+    name: "Amazon.co.jp",
+    urlRegex: /https:\/\/www\.amazon\.co\.jp\/s\?.*/,
+    disablingFunc: (url: string): string | null =>
+      removeUrlParam(url, siteParams["Amazon.co.jp"].key),
+    activatingFunc: (url: string): string | null =>
+      addUrlParam(
+        url,
+        siteParams["Amazon.co.jp"].key,
+        siteParams["Amazon.co.jp"].value,
+      ),
+  },
+  {
+    id: "Amazon.co.uk",
+    name: "Amazon.co.uk",
+    urlRegex: /https:\/\/www\.amazon\.co\.uk\/s\?.*/,
+    disablingFunc: (url: string): string | null =>
+      removeUrlParam(url, siteParams["Amazon.co.uk"].key),
+    activatingFunc: (url: string): string | null =>
+      addUrlParam(
+        url,
+        siteParams["Amazon.co.uk"].key,
+        siteParams["Amazon.co.uk"].value,
+      ),
+  },
+  {
+    id: "Amazon.de",
+    name: "Amazon.de",
+    urlRegex: /https:\/\/www\.amazon\.de\/s\?.*/,
+    disablingFunc: (url: string): string | null =>
+      removeUrlParam(url, siteParams["Amazon.de"].key),
+    activatingFunc: (url: string): string | null =>
+      addUrlParam(
+        url,
+        siteParams["Amazon.de"].key,
+        siteParams["Amazon.de"].value,
+      ),
+  },
+  {
+    id: "Amazon.es",
+    name: "Amazon.es",
+    urlRegex: /https:\/\/www\.amazon\.es\/s\?.*/,
+    disablingFunc: (url: string): string | null =>
+      removeUrlParam(url, siteParams["Amazon.es"].key),
+    activatingFunc: (url: string): string | null =>
+      addUrlParam(
+        url,
+        siteParams["Amazon.es"].key,
+        siteParams["Amazon.es"].value,
+      ),
+  },
+  {
+    id: "Amazon.fr",
+    name: "Amazon.fr",
+    urlRegex: /https:\/\/www\.amazon\.fr\/s\?.*/,
+    disablingFunc: (url: string): string | null =>
+      removeUrlParam(url, siteParams["Amazon.fr"].key),
+    activatingFunc: (url: string): string | null =>
+      addUrlParam(
+        url,
+        siteParams["Amazon.fr"].key,
+        siteParams["Amazon.fr"].value,
+      ),
+  },
+  {
+    id: "Amazon.it",
+    name: "Amazon.it",
+    urlRegex: /https:\/\/www\.amazon\.it\/s\?.*/,
+    disablingFunc: (url: string): string | null =>
+      removeUrlParam(url, siteParams["Amazon.it"].key),
+    activatingFunc: (url: string): string | null =>
+      addUrlParam(
+        url,
+        siteParams["Amazon.it"].key,
+        siteParams["Amazon.it"].value,
       ),
   },
   {
