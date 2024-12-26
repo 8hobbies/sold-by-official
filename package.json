@@ -1,6 +1,6 @@
 {
   "name": "Sold by Official",
-  "description": "Filter e-commerce websites to the official seller only",
+  "description": "Shop products sold by e-commerce websites themselves only",
   "private": true,
   "version": "1.0.0",
   "type": "module",
