@@ -1,6 +1,6 @@
 # Sold by Official
 
-Filter e-commerce websites to the official seller only.
+Shop products sold by e-commerce websites themselves only.
 
 Please visit https://www.goodaddon.com/sold-by-official/ for more information.
 
