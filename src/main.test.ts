@@ -188,6 +188,15 @@ describe("builtin sitedata", () => {
       ).toBe(
         `https://www.amazon.${tld}/s?${siteParams[amazonSiteId].key}=${encodeURIComponent(siteParams[amazonSiteId].value)}`,
       );
+
+      expect(
+        await generateActivatingUrl(
+          `https://www.amazon.${tld}/s/`,
+          builtinSiteData,
+        ),
+      ).toBe(
+        `https://www.amazon.${tld}/s/?${siteParams[amazonSiteId].key}=${encodeURIComponent(siteParams[amazonSiteId].value)}`,
+      );
     });
 
     test(`${amazonSiteId} disabling matched`, () => {

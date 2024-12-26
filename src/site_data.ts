@@ -95,7 +95,7 @@ export const builtinSiteData = [
   {
     id: "Amazon.ca",
     name: "Amazon.ca",
-    urlRegex: /https:\/\/www\.amazon\.ca\/s\?.*/,
+    urlRegex: /https:\/\/www\.amazon\.ca\/s[?/].*/,
     disablingFunc: (url: string): string | null =>
       removeUrlParam(url, siteParams["Amazon.ca"].key),
     activatingFunc: (url: string): string | null =>
@@ -108,7 +108,7 @@ export const builtinSiteData = [
   {
     id: "Amazon.com",
     name: "Amazon.com",
-    urlRegex: /https:\/\/www\.amazon\.com\/s\?.*/,
+    urlRegex: /https:\/\/www\.amazon\.com\/s[?/].*/,
     disablingFunc: (url: string): string | null =>
       removeUrlParam(url, siteParams["Amazon.com"].key),
     activatingFunc: (url: string): string | null =>
@@ -121,7 +121,7 @@ export const builtinSiteData = [
   {
     id: "Amazon.co.jp",
     name: "Amazon.co.jp",
-    urlRegex: /https:\/\/www\.amazon\.co\.jp\/s\?.*/,
+    urlRegex: /https:\/\/www\.amazon\.co\.jp\/s[?/].*/,
     disablingFunc: (url: string): string | null =>
       removeUrlParam(url, siteParams["Amazon.co.jp"].key),
     activatingFunc: (url: string): string | null =>
@@ -134,7 +134,7 @@ export const builtinSiteData = [
   {
     id: "Amazon.co.uk",
     name: "Amazon.co.uk",
-    urlRegex: /https:\/\/www\.amazon\.co\.uk\/s\?.*/,
+    urlRegex: /https:\/\/www\.amazon\.co\.uk\/s[?/].*/,
     disablingFunc: (url: string): string | null =>
       removeUrlParam(url, siteParams["Amazon.co.uk"].key),
     activatingFunc: (url: string): string | null =>
@@ -147,7 +147,7 @@ export const builtinSiteData = [
   {
     id: "Amazon.de",
     name: "Amazon.de",
-    urlRegex: /https:\/\/www\.amazon\.de\/s\?.*/,
+    urlRegex: /https:\/\/www\.amazon\.de\/s[?/].*/,
     disablingFunc: (url: string): string | null =>
       removeUrlParam(url, siteParams["Amazon.de"].key),
     activatingFunc: (url: string): string | null =>
@@ -160,7 +160,7 @@ export const builtinSiteData = [
   {
     id: "Amazon.es",
     name: "Amazon.es",
-    urlRegex: /https:\/\/www\.amazon\.es\/s\?.*/,
+    urlRegex: /https:\/\/www\.amazon\.es\/s[?/].*/,
     disablingFunc: (url: string): string | null =>
       removeUrlParam(url, siteParams["Amazon.es"].key),
     activatingFunc: (url: string): string | null =>
@@ -173,7 +173,7 @@ export const builtinSiteData = [
   {
     id: "Amazon.fr",
     name: "Amazon.fr",
-    urlRegex: /https:\/\/www\.amazon\.fr\/s\?.*/,
+    urlRegex: /https:\/\/www\.amazon\.fr\/s[?/].*/,
     disablingFunc: (url: string): string | null =>
       removeUrlParam(url, siteParams["Amazon.fr"].key),
     activatingFunc: (url: string): string | null =>
@@ -186,7 +186,7 @@ export const builtinSiteData = [
   {
     id: "Amazon.it",
     name: "Amazon.it",
-    urlRegex: /https:\/\/www\.amazon\.it\/s\?.*/,
+    urlRegex: /https:\/\/www\.amazon\.it\/s[?/].*/,
     disablingFunc: (url: string): string | null =>
       removeUrlParam(url, siteParams["Amazon.it"].key),
     activatingFunc: (url: string): string | null =>
