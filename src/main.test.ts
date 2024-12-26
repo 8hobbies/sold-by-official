@@ -167,8 +167,17 @@ describe("builtin sitedata", () => {
     });
   });
 
-  for (const amazonSiteId of ["Amazon.ca", "Amazon.com"] as const) {
-    const tld = amazonSiteId.split(".").pop();
+  for (const tld of [
+    "ca",
+    "com",
+    "co.jp",
+    "co.uk",
+    "de",
+    "es",
+    "fr",
+    "it",
+  ] as const) {
+    const amazonSiteId = `Amazon.${tld}` as const;
 
     test(`${amazonSiteId} activating matched`, async () => {
       expect(
