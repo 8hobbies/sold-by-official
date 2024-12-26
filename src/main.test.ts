@@ -167,7 +167,7 @@ describe("builtin sitedata", () => {
     });
   });
 
-  for (const amazonSiteId of ["Amazon.com", "Amazon.ca"] as const) {
+  for (const amazonSiteId of ["Amazon.ca", "Amazon.com"] as const) {
     const tld = amazonSiteId.split(".").pop();
 
     test(`${amazonSiteId} activating matched`, async () => {
@@ -191,7 +191,7 @@ describe("builtin sitedata", () => {
     });
   }
 
-  for (const neweggSiteId of ["Newegg.com", "Newegg.ca"] as const) {
+  for (const neweggSiteId of ["Newegg.ca", "Newegg.com"] as const) {
     const tld = neweggSiteId.split(".").pop();
 
     test(`${neweggSiteId} activating matched`, async () => {
@@ -212,6 +212,30 @@ describe("builtin sitedata", () => {
           builtinSiteData,
         ),
       ).toBe(`https://www.newegg.${tld}/p/pl`);
+    });
+  }
+
+  for (const targetSiteId of ["Target.com"] as const) {
+    const tld = targetSiteId.split(".").pop();
+
+    test(`${targetSiteId} activating matched`, async () => {
+      expect(
+        await generateActivatingUrl(
+          `https://www.target.${tld}/s?`,
+          builtinSiteData,
+        ),
+      ).toBe(
+        `https://www.target.${tld}/s?${siteParams[targetSiteId].key}=${encodeURIComponent(siteParams[targetSiteId].value)}`,
+      );
+    });
+
+    test(`${targetSiteId} disabling matched`, () => {
+      expect(
+        generateDisablingUrl(
+          `https://www.target.${tld}/s?facetedValue=`,
+          builtinSiteData,
+        ),
+      ).toBe(`https://www.target.${tld}/s`);
     });
   }
 });
