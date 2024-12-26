@@ -33,25 +33,42 @@ export interface SiteDataEntry {
 export type SiteData = SiteDataEntry[];
 
 export const siteParams = {
-  "Amazon.com": {
-    key: "rh",
-    value: "p_6:ATVPDKIKX0DER",
-  },
   "Amazon.ca": {
     key: "rh",
     value: "p_6:A3DWYIK6Y9EEQB",
   },
-  "Newegg.com": {
-    key: "N",
-    value: "8000",
+  "Amazon.com": {
+    key: "rh",
+    value: "p_6:ATVPDKIKX0DER",
   },
   "Newegg.ca": {
     key: "N",
     value: "8000",
   },
+  "Newegg.com": {
+    key: "N",
+    value: "8000",
+  },
+  "Target.com": {
+    key: "facetedValue",
+    value: "dq4mn",
+  },
 } as const;
 
 export const builtinSiteData = [
+  {
+    id: "Amazon.ca",
+    name: "Amazon.ca",
+    urlRegex: /https:\/\/www\.amazon\.ca\/s\?.*/,
+    disablingFunc: (url: string): string | null =>
+      removeUrlParam(url, siteParams["Amazon.ca"].key),
+    activatingFunc: (url: string): string | null =>
+      addUrlParam(
+        url,
+        siteParams["Amazon.ca"].key,
+        siteParams["Amazon.ca"].value,
+      ),
+  },
   {
     id: "Amazon.com",
     name: "Amazon.com",
@@ -66,16 +83,16 @@ export const builtinSiteData = [
       ),
   },
   {
-    id: "Amazon.ca",
-    name: "Amazon.ca",
-    urlRegex: /https:\/\/www\.amazon\.ca\/s\?.*/,
+    id: "Newegg.ca",
+    name: "Newegg.ca",
+    urlRegex: /https:\/\/www\.newegg\.ca\/p\/pl\?.*/,
     disablingFunc: (url: string): string | null =>
-      removeUrlParam(url, siteParams["Amazon.ca"].key),
+      removeUrlParam(url, siteParams["Newegg.ca"].key),
     activatingFunc: (url: string): string | null =>
       addUrlParam(
         url,
-        siteParams["Amazon.ca"].key,
-        siteParams["Amazon.ca"].value,
+        siteParams["Newegg.ca"].key,
+        siteParams["Newegg.ca"].value,
       ),
   },
   {
@@ -92,16 +109,16 @@ export const builtinSiteData = [
       ),
   },
   {
-    id: "Newegg.ca",
-    name: "Newegg.ca",
-    urlRegex: /https:\/\/www\.newegg\.ca\/p\/pl\?.*/,
+    id: "Target.com",
+    name: "Target.com",
+    urlRegex: /https:\/\/www\.target\.com\/s\?.*/,
     disablingFunc: (url: string): string | null =>
-      removeUrlParam(url, siteParams["Newegg.ca"].key),
+      removeUrlParam(url, siteParams["Target.com"].key),
     activatingFunc: (url: string): string | null =>
       addUrlParam(
         url,
-        siteParams["Newegg.ca"].key,
-        siteParams["Newegg.ca"].value,
+        siteParams["Target.com"].key,
+        siteParams["Target.com"].value,
       ),
   },
 ] as const satisfies SiteData;
