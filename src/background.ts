@@ -35,8 +35,12 @@ chrome.runtime.onInstalled.addListener(async (details) => {
   }
 });
 
-// Override URL when navigating.
-chrome.webNavigation.onBeforeNavigate.addListener(async (details) => {
+/** Callback when navigating to a new URL and we may need to update the URL. */
+async function updateToNewUrlCallback(
+  details:
+    | chrome.webNavigation.WebNavigationTransitionCallbackDetails
+    | chrome.webNavigation.WebNavigationParentedCallbackDetails,
+): Promise<void> {
   if (details.frameId !== 0) {
     return; // We are not concerned with subframes.
   }
@@ -48,10 +52,21 @@ chrome.webNavigation.onBeforeNavigate.addListener(async (details) => {
   await chrome.tabs.update(details.tabId, {
     url,
   });
-});
+}
 
-// Update badge text once the browser commits to visit a page.
-chrome.webNavigation.onCommitted.addListener(async (details) => {
+// Override URL when history state is updated. Normal websites work fine with
+// onBeforeNavigate. Some websites update history state through the history API
+// and do not navigate to a new target, such as target.com and walmart.com, thus
+// onBeforeNavigate isn't fired on those sites. Override URL when navigating.
+chrome.webNavigation.onBeforeNavigate.addListener(updateToNewUrlCallback);
+chrome.webNavigation.onHistoryStateUpdated.addListener(updateToNewUrlCallback);
+
+/** Callback when determined to navigate to a new URL and we may need to update
+ * badge text.
+ */
+async function updateBadgeTextCallback(
+  details: chrome.webNavigation.WebNavigationTransitionCallbackDetails,
+): Promise<void> {
   if (details.frameId !== 0) {
     return; // We are not concerned with subframes.
   }
@@ -60,7 +75,16 @@ chrome.webNavigation.onCommitted.addListener(async (details) => {
     tabId: details.tabId,
     text: await getUpdatedBadgeText(details.url, builtinSiteData),
   });
-});
+}
+// Update badge text once the browser commits to visit a page. Like
+// updateToNewUrlCallback, some websites use history API and thus don't trigger
+// onCommitted. Therefore, we need onHistoryStateUpdated as well.
+//
+// We listen to onCommitted instead of onBeforeNavigate because tab ID may
+// change after onBeforeNavigate is fired and thus nullifies the badge text
+// update.
+chrome.webNavigation.onCommitted.addListener(updateBadgeTextCallback);
+chrome.webNavigation.onHistoryStateUpdated.addListener(updateBadgeTextCallback);
 
 // Toggle
 chrome.action.onClicked.addListener(async (tab) => {
