@@ -248,6 +248,26 @@ describe("builtin sitedata", () => {
     });
   }
 
+  test("Newegg.com-Global activating matched", async () => {
+    expect(
+      await generateActivatingUrl(
+        `https://www.newegg.com/global/au-en/p/pl?`,
+        builtinSiteData,
+      ),
+    ).toBe(
+      `https://www.newegg.com/global/au-en/p/pl?${siteParams["Newegg.com-Global"].key}=${encodeURIComponent(siteParams["Newegg.com-Global"].value)}`,
+    );
+  });
+
+  test("Newegg.com-Global disabling matched", () => {
+    expect(
+      generateDisablingUrl(
+        `https://www.newegg.com/global/au-en/p/pl?N=`,
+        builtinSiteData,
+      ),
+    ).toBe(`https://www.newegg.com/global/au-en/p/pl`);
+  });
+
   for (const tld of ["ca", "com"] as const) {
     const walmartSiteId = `Walmart.${tld}` as const;
 

@@ -73,6 +73,10 @@ export const siteParams = {
     key: "N",
     value: "8000",
   },
+  "Newegg.com-Global": {
+    key: "N",
+    value: "8000",
+  },
   "Target.com": {
     key: "facetedValue",
     value: "dq4mn",
@@ -216,6 +220,19 @@ export const builtinSiteData = [
         url,
         siteParams["Newegg.com"].key,
         siteParams["Newegg.com"].value,
+      ),
+  },
+  {
+    id: "Newegg.com-Global",
+    name: "Newegg.com-Global",
+    urlRegex: /https:\/\/www\.newegg\.com\/global\/.+\/p\/pl\?.*/,
+    disablingFunc: (url: string): string | null =>
+      removeUrlParam(url, siteParams["Newegg.com-Global"].key),
+    activatingFunc: (url: string): string | null =>
+      addUrlParam(
+        url,
+        siteParams["Newegg.com-Global"].key,
+        siteParams["Newegg.com-Global"].value,
       ),
   },
   {
