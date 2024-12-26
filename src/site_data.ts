@@ -77,6 +77,14 @@ export const siteParams = {
     key: "facetedValue",
     value: "dq4mn",
   },
+  "Walmart.ca": {
+    key: "facet",
+    value: "retailer_type:Walmart",
+  },
+  "Walmart.com": {
+    key: "facet",
+    value: "retailer_type:Walmart",
+  },
 } as const;
 
 export const builtinSiteData = [
@@ -221,6 +229,32 @@ export const builtinSiteData = [
         url,
         siteParams["Target.com"].key,
         siteParams["Target.com"].value,
+      ),
+  },
+  {
+    id: "Walmart.ca",
+    name: "Walmart.ca",
+    urlRegex: /https:\/\/www\.walmart\.ca\/search\?.*/,
+    disablingFunc: (url: string): string | null =>
+      removeUrlParam(url, siteParams["Walmart.ca"].key),
+    activatingFunc: (url: string): string | null =>
+      addUrlParam(
+        url,
+        siteParams["Walmart.ca"].key,
+        siteParams["Walmart.ca"].value,
+      ),
+  },
+  {
+    id: "Walmart.com",
+    name: "Walmart.com",
+    urlRegex: /https:\/\/www\.walmart\.com\/search\?.*/,
+    disablingFunc: (url: string): string | null =>
+      removeUrlParam(url, siteParams["Walmart.com"].key),
+    activatingFunc: (url: string): string | null =>
+      addUrlParam(
+        url,
+        siteParams["Walmart.com"].key,
+        siteParams["Walmart.com"].value,
       ),
   },
 ] as const satisfies SiteData;
