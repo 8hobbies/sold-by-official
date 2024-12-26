@@ -200,8 +200,8 @@ describe("builtin sitedata", () => {
     });
   }
 
-  for (const neweggSiteId of ["Newegg.ca", "Newegg.com"] as const) {
-    const tld = neweggSiteId.split(".").pop();
+  for (const tld of ["ca", "com"] as const) {
+    const neweggSiteId = `Newegg.${tld}` as const;
 
     test(`${neweggSiteId} activating matched`, async () => {
       expect(
@@ -224,8 +224,8 @@ describe("builtin sitedata", () => {
     });
   }
 
-  for (const targetSiteId of ["Target.com"] as const) {
-    const tld = targetSiteId.split(".").pop();
+  for (const tld of ["com"] as const) {
+    const targetSiteId = `Target.${tld}` as const;
 
     test(`${targetSiteId} activating matched`, async () => {
       expect(
@@ -245,6 +245,30 @@ describe("builtin sitedata", () => {
           builtinSiteData,
         ),
       ).toBe(`https://www.target.${tld}/s`);
+    });
+  }
+
+  for (const tld of ["ca", "com"] as const) {
+    const walmartSiteId = `Walmart.${tld}` as const;
+
+    test(`${walmartSiteId} activating matched`, async () => {
+      expect(
+        await generateActivatingUrl(
+          `https://www.walmart.${tld}/search?`,
+          builtinSiteData,
+        ),
+      ).toBe(
+        `https://www.walmart.${tld}/search?${siteParams[walmartSiteId].key}=${encodeURIComponent(siteParams[walmartSiteId].value)}`,
+      );
+    });
+
+    test(`${walmartSiteId} disabling matched`, () => {
+      expect(
+        generateDisablingUrl(
+          `https://www.walmart.${tld}/search?facet=`,
+          builtinSiteData,
+        ),
+      ).toBe(`https://www.walmart.${tld}/search`);
     });
   }
 });
