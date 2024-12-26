@@ -41,13 +41,21 @@ export const siteParams = {
     key: "rh",
     value: "p_6:A3DWYIK6Y9EEQB",
   },
+  "Newegg.com": {
+    key: "N",
+    value: "8000",
+  },
+  "Newegg.ca": {
+    key: "N",
+    value: "8000",
+  },
 } as const;
 
 export const builtinSiteData = [
   {
     id: "Amazon.com",
     name: "Amazon.com",
-    urlRegex: /https:\/\/www\.amazon\.com\/s.*/,
+    urlRegex: /https:\/\/www\.amazon\.com\/s\?.*/,
     disablingFunc: (url: string): string | null =>
       removeUrlParam(url, siteParams["Amazon.com"].key),
     activatingFunc: (url: string): string | null =>
@@ -60,7 +68,7 @@ export const builtinSiteData = [
   {
     id: "Amazon.ca",
     name: "Amazon.ca",
-    urlRegex: /https:\/\/www\.amazon\.ca\/s.*/,
+    urlRegex: /https:\/\/www\.amazon\.ca\/s\?.*/,
     disablingFunc: (url: string): string | null =>
       removeUrlParam(url, siteParams["Amazon.ca"].key),
     activatingFunc: (url: string): string | null =>
@@ -68,6 +76,32 @@ export const builtinSiteData = [
         url,
         siteParams["Amazon.ca"].key,
         siteParams["Amazon.ca"].value,
+      ),
+  },
+  {
+    id: "Newegg.com",
+    name: "Newegg.com",
+    urlRegex: /https:\/\/www\.newegg\.com\/p\/pl\?.*/,
+    disablingFunc: (url: string): string | null =>
+      removeUrlParam(url, siteParams["Newegg.com"].key),
+    activatingFunc: (url: string): string | null =>
+      addUrlParam(
+        url,
+        siteParams["Newegg.com"].key,
+        siteParams["Newegg.com"].value,
+      ),
+  },
+  {
+    id: "Newegg.ca",
+    name: "Newegg.ca",
+    urlRegex: /https:\/\/www\.newegg\.ca\/p\/pl\?.*/,
+    disablingFunc: (url: string): string | null =>
+      removeUrlParam(url, siteParams["Newegg.ca"].key),
+    activatingFunc: (url: string): string | null =>
+      addUrlParam(
+        url,
+        siteParams["Newegg.ca"].key,
+        siteParams["Newegg.ca"].value,
       ),
   },
 ] as const satisfies SiteData;
