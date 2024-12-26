@@ -190,4 +190,28 @@ describe("builtin sitedata", () => {
       ).toBe(`https://www.amazon.${tld}/s`);
     });
   }
+
+  for (const neweggSiteId of ["Newegg.com", "Newegg.ca"] as const) {
+    const tld = neweggSiteId.split(".").pop();
+
+    test(`${neweggSiteId} activating matched`, async () => {
+      expect(
+        await generateActivatingUrl(
+          `https://www.newegg.${tld}/p/pl?`,
+          builtinSiteData,
+        ),
+      ).toBe(
+        `https://www.newegg.${tld}/p/pl?${siteParams[neweggSiteId].key}=${encodeURIComponent(siteParams[neweggSiteId].value)}`,
+      );
+    });
+
+    test(`${neweggSiteId} disabling matched`, () => {
+      expect(
+        generateDisablingUrl(
+          `https://www.newegg.${tld}/p/pl?N=`,
+          builtinSiteData,
+        ),
+      ).toBe(`https://www.newegg.${tld}/p/pl`);
+    });
+  }
 });
