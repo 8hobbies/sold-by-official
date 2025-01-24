@@ -2,7 +2,7 @@
   "name": "Sold by Official",
   "description": "Shop products sold by e-commerce websites themselves only",
   "private": true,
-  "version": "1.1.0",
+  "version": "1.1.1",
   "type": "module",
   "scripts": {
     "compile": "tsc",

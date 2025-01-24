@@ -21,6 +21,7 @@ import {
   getUpdatedBadgeText,
   toggleExtensionOnCurrentSite,
 } from "./main";
+import { areUrlsEqual } from "./utils";
 import { builtinSiteData } from "./site_data";
 
 chrome.runtime.onInstalled.addListener(async (details) => {
@@ -46,7 +47,7 @@ async function updateToNewUrlCallback(
   }
 
   const url = await generateActivatingUrl(details.url, builtinSiteData);
-  if (url === null || url === details.url) {
+  if (url === null || areUrlsEqual(url, details.url)) {
     return;
   }
   await chrome.tabs.update(details.tabId, {
@@ -94,7 +95,7 @@ chrome.action.onClicked.addListener(async (tab) => {
   }
 
   const url = await toggleExtensionOnCurrentSite(tab.url, builtinSiteData);
-  if (url === null || url === tab.url) {
+  if (url === null || areUrlsEqual(url, tab.url)) {
     return;
   }
 
