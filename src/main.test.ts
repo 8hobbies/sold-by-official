@@ -23,6 +23,7 @@ import {
   getUpdatedBadgeText,
   toggleExtensionOnCurrentSite,
 } from "./main";
+import { areUrlsEqual } from "./utils";
 
 describe("generate Url", () => {
   const activating1Result = "https://example.com/?result=activated" as const;
@@ -298,6 +299,34 @@ describe("builtin sitedata", () => {
           builtinSiteData,
         ),
       ).toBe(`https://www.walmart.${tld}/search`);
+    });
+  }
+});
+
+describe("URL Comparison", () => {
+  for (const [name, url1, url2] of [
+    ["same URL", "https://example.com/a?a", "https://example.com/a?a"],
+    [
+      "different querystring but same after normalization",
+      "https://example.com/a?a=",
+      "https://example.com/a?a",
+    ],
+  ] as const) {
+    test(`Equal URLs: ${name}`, () => {
+      expect(areUrlsEqual(url1, url2));
+    });
+  }
+
+  for (const [name, url1, url2] of [
+    [
+      "different querystring",
+      "https://example.com/a?a&b",
+      "https://example.com/a?a",
+    ],
+    ["different path", "https://example.com/b?a", "https://example.com/a?a"],
+  ] as const) {
+    test(`Unequal URLs: ${name}`, () => {
+      expect(areUrlsEqual(url1, url2));
     });
   }
 });

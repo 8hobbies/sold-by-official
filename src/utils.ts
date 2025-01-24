@@ -53,3 +53,13 @@ export function removeUrlParam(url: string, paramKey: string): string | null {
   parsedUrl.searchParams.delete(paramKey);
   return parsedUrl.toString();
 }
+
+/** Are the two URLs equal? */
+export function areUrlsEqual(url1: string, url2: string): boolean {
+  const urls = [new URL(url1), new URL(url2)];
+  // Normalize the query strings.
+  for (const url of urls) {
+    url.search = new URLSearchParams(url.search).toString();
+  }
+  return urls[0].toString() === urls[1].toString();
+}
