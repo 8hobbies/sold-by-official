@@ -180,25 +180,25 @@ describe("builtin sitedata", () => {
   ] as const) {
     const amazonSiteId = `Amazon.${tld}` as const;
 
-    test(`${amazonSiteId} activating matched`, async () => {
-      expect(
-        await generateActivatingUrl(
-          `https://www.amazon.${tld}/s?`,
-          builtinSiteData,
-        ),
-      ).toBe(
-        `https://www.amazon.${tld}/s?${siteParams[amazonSiteId].key}=${encodeURIComponent(siteParams[amazonSiteId].value)}`,
-      );
-
-      expect(
-        await generateActivatingUrl(
-          `https://www.amazon.${tld}/s/`,
-          builtinSiteData,
-        ),
-      ).toBe(
-        `https://www.amazon.${tld}/s/?${siteParams[amazonSiteId].key}=${encodeURIComponent(siteParams[amazonSiteId].value)}`,
-      );
-    });
+    for (const [name, url] of [
+      ["question mark ending", `https://www.amazon.${tld}/s?`],
+      ["slash ending", `https://www.amazon.${tld}/s/`],
+      [
+        "question mark ending with subcategory",
+        `https://www.amazon.${tld}/subcategory/s/`,
+      ],
+      [
+        "slash ending with subcategory",
+        `https://www.amazon.${tld}/subcategory/s?`,
+      ],
+    ] as const) {
+      test(`${amazonSiteId} activating matched: ${name}`, async () => {
+        const resultUrlPrefix = url.endsWith("?") ? url : `${url}?`;
+        expect(await generateActivatingUrl(url, builtinSiteData)).toBe(
+          `${resultUrlPrefix}${siteParams[amazonSiteId].key}=${encodeURIComponent(siteParams[amazonSiteId].value)}`,
+        );
+      });
+    }
 
     test(`${amazonSiteId} disabling matched`, () => {
       expect(
