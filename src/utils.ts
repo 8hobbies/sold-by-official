@@ -38,12 +38,13 @@ export function addUrlParam(
 }
 
 /** Add a param to a URL. if the key already exists, treat the value as
- * comma-separated and append the specified value.
+ * delimiter-separated and append the specified value.
  */
-export function addUrlParamCommaSeparated(
+export function addUrlParamDelimiterSeparated(
   url: string,
   paramKey: string,
   paramValue: string,
+  delimiter: string,
 ): string | null {
   const parsedUrl = URL.parse(url);
 
@@ -61,11 +62,15 @@ export function addUrlParamCommaSeparated(
     return addUrlParam(url, paramKey, paramValue);
   }
 
-  if (existingValue.split(",").includes(paramValue)) {
+  if (existingValue.split(delimiter).includes(paramValue)) {
     // No need to change since the param value is already in the value.
     return url;
   }
-  return addUrlParam(url, paramKey, `${existingValue},${paramValue}`);
+  return addUrlParam(
+    url,
+    paramKey,
+    `${existingValue}${delimiter}${paramValue}`,
+  );
 }
 
 /** Remove a param from a URL. */

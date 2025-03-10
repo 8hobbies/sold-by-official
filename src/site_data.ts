@@ -18,7 +18,7 @@
 
 import {
   addUrlParam,
-  addUrlParamCommaSeparated,
+  addUrlParamDelimiterSeparated,
   removeUrlParam,
 } from "./utils";
 
@@ -103,10 +103,11 @@ export const builtinSiteData = [
     disablingFunc: (url: string): string | null =>
       removeUrlParam(url, siteParams["Amazon.ca"].key),
     activatingFunc: (url: string): string | null =>
-      addUrlParamCommaSeparated(
+      addUrlParamDelimiterSeparated(
         url,
         siteParams["Amazon.ca"].key,
         siteParams["Amazon.ca"].value,
+        ",",
       ),
   },
   {
@@ -116,10 +117,11 @@ export const builtinSiteData = [
     disablingFunc: (url: string): string | null =>
       removeUrlParam(url, siteParams["Amazon.com"].key),
     activatingFunc: (url: string): string | null =>
-      addUrlParamCommaSeparated(
+      addUrlParamDelimiterSeparated(
         url,
         siteParams["Amazon.com"].key,
         siteParams["Amazon.com"].value,
+        ",",
       ),
   },
   {
@@ -129,10 +131,11 @@ export const builtinSiteData = [
     disablingFunc: (url: string): string | null =>
       removeUrlParam(url, siteParams["Amazon.co.jp"].key),
     activatingFunc: (url: string): string | null =>
-      addUrlParamCommaSeparated(
+      addUrlParamDelimiterSeparated(
         url,
         siteParams["Amazon.co.jp"].key,
         siteParams["Amazon.co.jp"].value,
+        ",",
       ),
   },
   {
@@ -142,10 +145,11 @@ export const builtinSiteData = [
     disablingFunc: (url: string): string | null =>
       removeUrlParam(url, siteParams["Amazon.co.uk"].key),
     activatingFunc: (url: string): string | null =>
-      addUrlParamCommaSeparated(
+      addUrlParamDelimiterSeparated(
         url,
         siteParams["Amazon.co.uk"].key,
         siteParams["Amazon.co.uk"].value,
+        ",",
       ),
   },
   {
@@ -155,10 +159,11 @@ export const builtinSiteData = [
     disablingFunc: (url: string): string | null =>
       removeUrlParam(url, siteParams["Amazon.de"].key),
     activatingFunc: (url: string): string | null =>
-      addUrlParamCommaSeparated(
+      addUrlParamDelimiterSeparated(
         url,
         siteParams["Amazon.de"].key,
         siteParams["Amazon.de"].value,
+        ",",
       ),
   },
   {
@@ -168,10 +173,11 @@ export const builtinSiteData = [
     disablingFunc: (url: string): string | null =>
       removeUrlParam(url, siteParams["Amazon.es"].key),
     activatingFunc: (url: string): string | null =>
-      addUrlParamCommaSeparated(
+      addUrlParamDelimiterSeparated(
         url,
         siteParams["Amazon.es"].key,
         siteParams["Amazon.es"].value,
+        ",",
       ),
   },
   {
@@ -181,10 +187,11 @@ export const builtinSiteData = [
     disablingFunc: (url: string): string | null =>
       removeUrlParam(url, siteParams["Amazon.fr"].key),
     activatingFunc: (url: string): string | null =>
-      addUrlParamCommaSeparated(
+      addUrlParamDelimiterSeparated(
         url,
         siteParams["Amazon.fr"].key,
         siteParams["Amazon.fr"].value,
+        ",",
       ),
   },
   {
@@ -194,10 +201,11 @@ export const builtinSiteData = [
     disablingFunc: (url: string): string | null =>
       removeUrlParam(url, siteParams["Amazon.it"].key),
     activatingFunc: (url: string): string | null =>
-      addUrlParamCommaSeparated(
+      addUrlParamDelimiterSeparated(
         url,
         siteParams["Amazon.it"].key,
         siteParams["Amazon.it"].value,
+        ",",
       ),
   },
   {
@@ -207,10 +215,11 @@ export const builtinSiteData = [
     disablingFunc: (url: string): string | null =>
       removeUrlParam(url, siteParams["Newegg.ca"].key),
     activatingFunc: (url: string): string | null =>
-      addUrlParam(
+      addUrlParamDelimiterSeparated(
         url,
         siteParams["Newegg.ca"].key,
         siteParams["Newegg.ca"].value,
+        " ",
       ),
   },
   {
@@ -220,10 +229,11 @@ export const builtinSiteData = [
     disablingFunc: (url: string): string | null =>
       removeUrlParam(url, siteParams["Newegg.com"].key),
     activatingFunc: (url: string): string | null =>
-      addUrlParam(
+      addUrlParamDelimiterSeparated(
         url,
         siteParams["Newegg.com"].key,
         siteParams["Newegg.com"].value,
+        " ",
       ),
   },
   {
@@ -233,10 +243,11 @@ export const builtinSiteData = [
     disablingFunc: (url: string): string | null =>
       removeUrlParam(url, siteParams["Newegg.com-Global"].key),
     activatingFunc: (url: string): string | null =>
-      addUrlParam(
+      addUrlParamDelimiterSeparated(
         url,
         siteParams["Newegg.com-Global"].key,
         siteParams["Newegg.com-Global"].value,
+        " ",
       ),
   },
   {
