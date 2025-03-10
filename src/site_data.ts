@@ -270,10 +270,11 @@ export const builtinSiteData = [
     disablingFunc: (url: string): string | null =>
       removeUrlParam(url, siteParams["Walmart.ca"].key),
     activatingFunc: (url: string): string | null =>
-      addUrlParam(
+      addUrlParamDelimiterSeparated(
         url,
         siteParams["Walmart.ca"].key,
         siteParams["Walmart.ca"].value,
+        "||",
       ),
   },
   {
@@ -283,10 +284,11 @@ export const builtinSiteData = [
     disablingFunc: (url: string): string | null =>
       removeUrlParam(url, siteParams["Walmart.com"].key),
     activatingFunc: (url: string): string | null =>
-      addUrlParam(
+      addUrlParamDelimiterSeparated(
         url,
         siteParams["Walmart.com"].key,
         siteParams["Walmart.com"].value,
+        "||",
       ),
   },
 ] as const satisfies SiteData;

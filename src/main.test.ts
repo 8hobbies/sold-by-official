@@ -333,16 +333,39 @@ describe("builtin sitedata", () => {
   for (const tld of ["ca", "com"] as const) {
     const walmartSiteId = `Walmart.${tld}` as const;
 
-    test(`${walmartSiteId} activating matched`, async () => {
-      expect(
-        await generateActivatingUrl(
-          `https://www.walmart.${tld}/search?`,
-          builtinSiteData,
-        ),
-      ).toBe(
+    for (const [name, url, expected] of [
+      [
+        "question mark ending",
+        `https://www.walmart.${tld}/search?`,
         `https://www.walmart.${tld}/search?${siteParams[walmartSiteId].key}=${encodeURIComponent(siteParams[walmartSiteId].value)}`,
-      );
-    });
+      ],
+      [
+        "params only contain the official seller key-value pair",
+        `https://www.walmart.${tld}/search?${siteParams[walmartSiteId].key}=${encodeURIComponent(siteParams[walmartSiteId].value)}`,
+        `https://www.walmart.${tld}/search?${siteParams[walmartSiteId].key}=${encodeURIComponent(siteParams[walmartSiteId].value)}`,
+      ],
+      [
+        "params contain the official seller key-value pair among other values",
+        `https://www.walmart.${tld}/search?${siteParams[walmartSiteId].key}=${encodeURIComponent("other||" + siteParams[walmartSiteId].value)}`,
+        `https://www.walmart.${tld}/search?${siteParams[walmartSiteId].key}=${encodeURIComponent("other||" + siteParams[walmartSiteId].value)}`,
+      ],
+      [
+        "params already contain the N key with a different value",
+        `https://www.walmart.${tld}/search?${siteParams[walmartSiteId].key}=other`,
+        `https://www.walmart.${tld}/search?${siteParams[walmartSiteId].key}=${encodeURIComponent("other||" + siteParams[walmartSiteId].value)}`,
+      ],
+      [
+        "params already contain the N key with two different values",
+        `https://www.walmart.${tld}/search?${siteParams[walmartSiteId].key}=${encodeURIComponent("other1||other2")}`,
+        `https://www.walmart.${tld}/search?${siteParams[walmartSiteId].key}=${encodeURIComponent("other1||other2||" + siteParams[walmartSiteId].value)}`,
+      ],
+    ] as const) {
+      test(`${walmartSiteId} activating matched: ${name}`, async () => {
+        expect(await generateActivatingUrl(url, builtinSiteData)).toBe(
+          expected,
+        );
+      });
+    }
 
     test(`${walmartSiteId} disabling matched`, () => {
       expect(
