@@ -180,22 +180,51 @@ describe("builtin sitedata", () => {
   ] as const) {
     const amazonSiteId = `Amazon.${tld}` as const;
 
-    for (const [name, url] of [
-      ["question mark ending", `https://www.amazon.${tld}/s?`],
-      ["slash ending", `https://www.amazon.${tld}/s/`],
+    for (const [name, url, expected] of [
+      [
+        "question mark ending",
+        `https://www.amazon.${tld}/s?`,
+        `https://www.amazon.${tld}/s?${siteParams[amazonSiteId].key}=${encodeURIComponent(siteParams[amazonSiteId].value)}`,
+      ],
+      [
+        "slash ending",
+        `https://www.amazon.${tld}/s/`,
+        `https://www.amazon.${tld}/s/?${siteParams[amazonSiteId].key}=${encodeURIComponent(siteParams[amazonSiteId].value)}`,
+      ],
       [
         "question mark ending with subcategory",
-        `https://www.amazon.${tld}/subcategory/s/`,
+        `https://www.amazon.${tld}/subcategory/s?`,
+        `https://www.amazon.${tld}/subcategory/s?${siteParams[amazonSiteId].key}=${encodeURIComponent(siteParams[amazonSiteId].value)}`,
       ],
       [
         "slash ending with subcategory",
-        `https://www.amazon.${tld}/subcategory/s?`,
+        `https://www.amazon.${tld}/subcategory/s/`,
+        `https://www.amazon.${tld}/subcategory/s/?${siteParams[amazonSiteId].key}=${encodeURIComponent(siteParams[amazonSiteId].value)}`,
+      ],
+      [
+        "params only contain the Amazon seller key-value pair",
+        `https://www.amazon.${tld}/subcategory/s?${siteParams[amazonSiteId].key}=${encodeURIComponent(siteParams[amazonSiteId].value)}`,
+        `https://www.amazon.${tld}/subcategory/s?${siteParams[amazonSiteId].key}=${encodeURIComponent(siteParams[amazonSiteId].value)}`,
+      ],
+      [
+        "params contain the Amazon seller key-value pair among other values",
+        `https://www.amazon.${tld}/subcategory/s?${siteParams[amazonSiteId].key}=${encodeURIComponent("other," + siteParams[amazonSiteId].value)}`,
+        `https://www.amazon.${tld}/subcategory/s?${siteParams[amazonSiteId].key}=${encodeURIComponent("other," + siteParams[amazonSiteId].value)}`,
+      ],
+      [
+        "params already contain the rh key with a different value",
+        `https://www.amazon.${tld}/subcategory/s?${siteParams[amazonSiteId].key}=other`,
+        `https://www.amazon.${tld}/subcategory/s?${siteParams[amazonSiteId].key}=${encodeURIComponent("other," + siteParams[amazonSiteId].value)}`,
+      ],
+      [
+        "params already contain the rh key with two different values",
+        `https://www.amazon.${tld}/subcategory/s?${siteParams[amazonSiteId].key}=${encodeURIComponent("other1,other2")}`,
+        `https://www.amazon.${tld}/subcategory/s?${siteParams[amazonSiteId].key}=${encodeURIComponent("other1,other2," + siteParams[amazonSiteId].value)}`,
       ],
     ] as const) {
       test(`${amazonSiteId} activating matched: ${name}`, async () => {
-        const resultUrlPrefix = url.endsWith("?") ? url : `${url}?`;
         expect(await generateActivatingUrl(url, builtinSiteData)).toBe(
-          `${resultUrlPrefix}${siteParams[amazonSiteId].key}=${encodeURIComponent(siteParams[amazonSiteId].value)}`,
+          expected,
         );
       });
     }

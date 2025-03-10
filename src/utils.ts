@@ -37,6 +37,37 @@ export function addUrlParam(
   return parsedUrl.toString();
 }
 
+/** Add a param to a URL. if the key already exists, treat the value as
+ * comma-separated and append the specified value.
+ */
+export function addUrlParamCommaSeparated(
+  url: string,
+  paramKey: string,
+  paramValue: string,
+): string | null {
+  const parsedUrl = URL.parse(url);
+
+  // TODO: Impossible to create a case to trigger this part for now. Remove the coverage exception once we can.
+  /* c8 ignore start */
+  if (parsedUrl === null) {
+    // Not a URL.
+    console.error(`${url} is not a URL.`);
+    return null;
+  }
+  /* c8 ignore stop */
+
+  const existingValue = parsedUrl.searchParams.get(paramKey);
+  if (existingValue === null) {
+    return addUrlParam(url, paramKey, paramValue);
+  }
+
+  if (existingValue.split(",").includes(paramValue)) {
+    // No need to change since the param value is already in the value.
+    return url;
+  }
+  return addUrlParam(url, paramKey, `${existingValue},${paramValue}`);
+}
+
 /** Remove a param from a URL. */
 export function removeUrlParam(url: string, paramKey: string): string | null {
   const parsedUrl = URL.parse(url);
