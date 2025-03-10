@@ -203,23 +203,23 @@ describe("builtin sitedata", () => {
       ],
       [
         "params only contain the Amazon seller key-value pair",
-        `https://www.amazon.${tld}/subcategory/s?${siteParams[amazonSiteId].key}=${encodeURIComponent(siteParams[amazonSiteId].value)}`,
-        `https://www.amazon.${tld}/subcategory/s?${siteParams[amazonSiteId].key}=${encodeURIComponent(siteParams[amazonSiteId].value)}`,
+        `https://www.amazon.${tld}/s?${siteParams[amazonSiteId].key}=${encodeURIComponent(siteParams[amazonSiteId].value)}`,
+        `https://www.amazon.${tld}/s?${siteParams[amazonSiteId].key}=${encodeURIComponent(siteParams[amazonSiteId].value)}`,
       ],
       [
         "params contain the Amazon seller key-value pair among other values",
-        `https://www.amazon.${tld}/subcategory/s?${siteParams[amazonSiteId].key}=${encodeURIComponent("other," + siteParams[amazonSiteId].value)}`,
-        `https://www.amazon.${tld}/subcategory/s?${siteParams[amazonSiteId].key}=${encodeURIComponent("other," + siteParams[amazonSiteId].value)}`,
+        `https://www.amazon.${tld}/s?${siteParams[amazonSiteId].key}=${encodeURIComponent("other," + siteParams[amazonSiteId].value)}`,
+        `https://www.amazon.${tld}/s?${siteParams[amazonSiteId].key}=${encodeURIComponent("other," + siteParams[amazonSiteId].value)}`,
       ],
       [
         "params already contain the rh key with a different value",
-        `https://www.amazon.${tld}/subcategory/s?${siteParams[amazonSiteId].key}=other`,
-        `https://www.amazon.${tld}/subcategory/s?${siteParams[amazonSiteId].key}=${encodeURIComponent("other," + siteParams[amazonSiteId].value)}`,
+        `https://www.amazon.${tld}/s?${siteParams[amazonSiteId].key}=other`,
+        `https://www.amazon.${tld}/s?${siteParams[amazonSiteId].key}=${encodeURIComponent("other," + siteParams[amazonSiteId].value)}`,
       ],
       [
         "params already contain the rh key with two different values",
-        `https://www.amazon.${tld}/subcategory/s?${siteParams[amazonSiteId].key}=${encodeURIComponent("other1,other2")}`,
-        `https://www.amazon.${tld}/subcategory/s?${siteParams[amazonSiteId].key}=${encodeURIComponent("other1,other2," + siteParams[amazonSiteId].value)}`,
+        `https://www.amazon.${tld}/s?${siteParams[amazonSiteId].key}=${encodeURIComponent("other1,other2")}`,
+        `https://www.amazon.${tld}/s?${siteParams[amazonSiteId].key}=${encodeURIComponent("other1,other2," + siteParams[amazonSiteId].value)}`,
       ],
     ] as const) {
       test(`${amazonSiteId} activating matched: ${name}`, async () => {
@@ -242,16 +242,39 @@ describe("builtin sitedata", () => {
   for (const tld of ["ca", "com"] as const) {
     const neweggSiteId = `Newegg.${tld}` as const;
 
-    test(`${neweggSiteId} activating matched`, async () => {
-      expect(
-        await generateActivatingUrl(
-          `https://www.newegg.${tld}/p/pl?`,
-          builtinSiteData,
-        ),
-      ).toBe(
+    for (const [name, url, expected] of [
+      [
+        "question mark ending",
+        `https://www.newegg.${tld}/p/pl?`,
         `https://www.newegg.${tld}/p/pl?${siteParams[neweggSiteId].key}=${encodeURIComponent(siteParams[neweggSiteId].value)}`,
-      );
-    });
+      ],
+      [
+        "params only contain the official seller key-value pair",
+        `https://www.newegg.${tld}/p/pl?${siteParams[neweggSiteId].key}=${encodeURIComponent(siteParams[neweggSiteId].value)}`,
+        `https://www.newegg.${tld}/p/pl?${siteParams[neweggSiteId].key}=${encodeURIComponent(siteParams[neweggSiteId].value)}`,
+      ],
+      [
+        "params contain the official seller key-value pair among other values",
+        `https://www.newegg.${tld}/p/pl?${siteParams[neweggSiteId].key}=${encodeURIComponent("other " + siteParams[neweggSiteId].value).replace(/%20/g, "+")}`,
+        `https://www.newegg.${tld}/p/pl?${siteParams[neweggSiteId].key}=${encodeURIComponent("other " + siteParams[neweggSiteId].value).replace(/%20/g, "+")}`,
+      ],
+      [
+        "params already contain the N key with a different value",
+        `https://www.newegg.${tld}/p/pl?${siteParams[neweggSiteId].key}=other`,
+        `https://www.newegg.${tld}/p/pl?${siteParams[neweggSiteId].key}=${encodeURIComponent("other " + siteParams[neweggSiteId].value).replace(/%20/g, "+")}`,
+      ],
+      [
+        "params already contain the N key with two different values",
+        `https://www.newegg.${tld}/p/pl?${siteParams[neweggSiteId].key}=${encodeURIComponent("other1 other2").replace(/%20/g, "+")}`,
+        `https://www.newegg.${tld}/p/pl?${siteParams[neweggSiteId].key}=${encodeURIComponent("other1 other2 " + siteParams[neweggSiteId].value).replace(/%20/g, "+")}`,
+      ],
+    ] as const) {
+      test(`${neweggSiteId} activating matched: ${name}`, async () => {
+        expect(await generateActivatingUrl(url, builtinSiteData)).toBe(
+          expected,
+        );
+      });
+    }
 
     test(`${neweggSiteId} disabling matched`, () => {
       expect(
