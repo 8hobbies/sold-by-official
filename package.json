@@ -31,7 +31,7 @@
     "@testing-library/jest-dom": "6.9.1",
     "@testing-library/react": "16.3.1",
     "@testing-library/user-event": "14.6.1",
-    "@types/chrome": "0.1.32",
+    "@types/chrome": "0.1.24",
     "@types/jest": "30.0.0",
     "@types/webextension-polyfill": "0.12.4",
     "@vitest/coverage-v8": "4.0.16",
