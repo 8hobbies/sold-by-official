@@ -40,7 +40,7 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 async function updateToNewUrlCallback(
   details:
     | chrome.webNavigation.WebNavigationTransitionCallbackDetails
-    | chrome.webNavigation.WebNavigationParentedCallbackDetails,
+    | chrome.webNavigation.WebNavigationBaseCallbackDetails,
 ): Promise<void> {
   if (details.frameId !== 0) {
     return; // We are not concerned with subframes.
