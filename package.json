@@ -26,7 +26,7 @@
     "@8hobbies/utils": "4.2.0"
   },
   "devDependencies": {
-    "@8hobbies/eslint-conf-baseline": "6.0.0",
+    "@8hobbies/eslint-conf-baseline": "7.0.0",
     "@8hobbies/vite-plugin-year": "1.0.2",
     "@testing-library/jest-dom": "6.9.1",
     "@testing-library/react": "16.3.1",
