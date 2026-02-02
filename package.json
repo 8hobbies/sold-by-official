@@ -35,6 +35,7 @@
     "@types/jest": "30.0.0",
     "@types/webextension-polyfill": "0.12.4",
     "@vitest/coverage-v8": "4.0.17",
+    "eslint": "^9.39.2",
     "happy-dom": "20.3.3",
     "prettier": "3.8.0",
     "sass-embedded": "1.97.2",
