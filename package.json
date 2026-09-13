@@ -34,7 +34,7 @@
     "@types/chrome": "0.2.5",
     "@types/jest": "30.0.0",
     "@types/webextension-polyfill": "0.12.5",
-    "@vitest/coverage-v8": "4.1.10",
+    "@vitest/coverage-v8": "5.0.0",
     "happy-dom": "20.11.1",
     "prettier": "3.9.6",
     "sass-embedded": "1.100.0",
